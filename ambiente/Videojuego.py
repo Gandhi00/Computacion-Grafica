@@ -36,18 +36,37 @@ class Jugador(pygame.sprite.Sprite):
         #colision y
         self.rect.y+=self.vely
 
+class Bloque(pygame.sprite.Sprite):
+    def __init__(self, pos, anchura, altura, color=VERDE):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=pygame.Surface([anchura, altura])
+        self.image.fill(color)
+        self.rect=self.image.get_rect()
+        self.rect.x= pos[0]
+        self.rect.y= pos[1]
+        self.VelocidadFondo = 0
+
+    def update(self):
+        pass
+        #self.rect.x += self.VelocidadFondo
+
 
 if __name__ == '__main__':
+
     pygame.init()
     #Definicion de variables
     ventana=pygame.display.set_mode([ANCHO,ALTO])
 
-    texturas = pygame.image.load('TileA1.png')
+    animal = pygame.image.load('animales.png')
 
-    listaImagenes=[]
-    for i in range(16):
-        cuadro = texturas.subsurface(0,0,32,32)
-        listaImagenes.append(cuadro)
+    #recortar columnas
+    filas=[]
+    for j in range(8):
+        columnas=[]
+        for i in range(12):
+            recorte = animal.subsurface(32*i,32*j,32,32)
+            columnas.append(recorte)
+        filas.append(columnas)
 
     jugadores=pygame.sprite.Group()
     bloques=pygame.sprite.Group()
@@ -65,10 +84,9 @@ if __name__ == '__main__':
 
 
     finDeJuego = False
-
     reloj=pygame.time.Clock()
     fin=False
-
+    cont = 0
 
     while not fin:
         #Gestion eventos
@@ -107,10 +125,15 @@ if __name__ == '__main__':
 
     #limpieza de memoria----------------------------------------------------------------------
         #Refresco
+        if cont >= 2:
+            cont = 0
+        else:
+            cont += 1
+
         if not finDeJuego:
             jugadores.update()
-            ventana.fill(AZUL)
-            ventana.blit(listaImagenes[7],[0,0])
+            ventana.fill(VERDE)
+            ventana.blit(filas[1][cont],[0,0])
             jugadores.draw(ventana)
             bloques.draw(ventana)
             pygame.display.flip()
