@@ -32,43 +32,9 @@ class Jugador(pygame.sprite.Sprite):
     def update(self):
         #colision x
         self.rect.x+=self.velx
-        listaColision=pygame.sprite.spritecollide(self,self.Bloques,False)
-        for b in listaColision:
-            if self.velx > 0:
-                if self.rect.right > b.rect.left:
-                    self.rect.right = b.rect.left
-                    self.velx=0
-            else:
-                if self.rect.left < b.rect.right:
-                    self.rect.left = b.rect.right
-                    self.velx=0
 
         #colision y
         self.rect.y+=self.vely
-        listaColision=pygame.sprite.spritecollide(self,self.Bloques,False)
-        for b in listaColision:
-            if self.vely > 0:
-                if self.rect.bottom > b.rect.top:
-                    self.rect.bottom = b.rect.top
-                    self.vely = 0
-            else:
-                if j.rect.top < b.rect.bottom:
-                    j.rect.top = b.rect.bottom
-                    j.vely = 0
-
-
-class Bloque(pygame.sprite.Sprite):
-    def __init__(self, pos, anchura, altura, color=VERDE):
-        pygame.sprite.Sprite.__init__(self)
-        self.image=pygame.Surface([anchura, altura])
-        self.image.fill(color)
-        self.rect=self.image.get_rect()
-        self.rect.x= pos[0]
-        self.rect.y= pos[1]
-        self.VelocidadFondo = 0
-
-    def update(self):
-        self.rect.x += self.VelocidadFondo
 
 
 if __name__ == '__main__':
@@ -76,9 +42,12 @@ if __name__ == '__main__':
     #Definicion de variables
     ventana=pygame.display.set_mode([ANCHO,ALTO])
 
-    Fondo=pygame.image.load('Fondo.jpg')
-    info = Fondo.get_rect()
-    limiteVentana = 550
+    texturas = pygame.image.load('TileA1.png')
+
+    listaImagenes=[]
+    for i in range(16):
+        cuadro = texturas.subsurface(0,0,32,32)
+        listaImagenes.append(cuadro)
 
     jugadores=pygame.sprite.Group()
     bloques=pygame.sprite.Group()
@@ -86,13 +55,13 @@ if __name__ == '__main__':
     j=Jugador([300,200])
     jugadores.add(j)
 
-    bloque=Bloque([200,300],200,120)
-    bloques.add(bloque)
+    #bloque=Bloque([200,300],200,120)
+    #bloques.add(bloque)
 
-    bloque2=Bloque([50,50],50,50)
-    bloques.add(bloque2)
+    #bloque2=Bloque([50,50],50,50)
+    #bloques.add(bloque2)
 
-    j.Bloques = bloques
+    #j.Bloques = bloques
 
 
     finDeJuego = False
@@ -100,8 +69,6 @@ if __name__ == '__main__':
     reloj=pygame.time.Clock()
     fin=False
 
-    FondoX = 0
-    VelocidadFondoX = 0
 
     while not fin:
         #Gestion eventos
@@ -126,7 +93,6 @@ if __name__ == '__main__':
             if event.type == pygame.KEYUP:
                 j.vely=0
                 j.velx=0
-                VelocidadFondoX = 0
 
         #Controles Generales----------------------------------------------------------------------
         #Control de jugador
@@ -136,15 +102,6 @@ if __name__ == '__main__':
         if j.rect.x < 0 - j.rect.width:
             j.rect.x=ANCHO
 
-        if j.rect.x > limiteVentana:
-            j.rect.x = limiteVentana
-            j.velx = 0
-            VelocidadFondoX = -5
-
-        if j.rect.x < 50:
-            j.rect.x = 50
-            j.velx = 0
-            VelocidadFondoX = 5
 
 
 
@@ -152,10 +109,9 @@ if __name__ == '__main__':
         #Refresco
         if not finDeJuego:
             jugadores.update()
-            #ventana.fill(AZUL)
-            ventana.blit(Fondo, [FondoX,0])
+            ventana.fill(AZUL)
+            ventana.blit(listaImagenes[7],[0,0])
             jugadores.draw(ventana)
             bloques.draw(ventana)
             pygame.display.flip()
             reloj.tick(40)
-            FondoX += VelocidadFondoX
